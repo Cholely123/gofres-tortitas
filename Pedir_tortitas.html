@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construye tu Montaña de Tortitas 🥞</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #fcefe6;
+            text-align: center;
+            padding: 10px;
+            color: #333;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #d2691e;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .tower {
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 400px;
+            height: auto;
+            border: 4px dashed #ccc;
+            border-radius: 10px;
+            padding: 15px;
+            background-color: #fff8f0;
+        }
+
+        .layer {
+            width: 180px;
+            height: 60px;
+            margin: 5px 0;
+            border-radius: 10px;
+            line-height: 60px;
+            color: rgb(0, 0, 0);
+            font-weight: bold;
+            font-size: 14px;
+            background-color: #ddd;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .ingredient {
+            padding: 12px 18px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.1em;
+            min-width: 120px;
+            transition: background-color 0.3s ease;
+        }
+
+        .ingredient:hover {
+            background-color: #ddd;
+        }
+
+        .tortita { background-color: #deb887; }
+        .choco-blanco { background-color: #fffacd; color: #333; }
+        .choco-leche { background-color: #4b2e2e; }
+        .choco { background-color: #6a3313; }
+        .kitkat { background-color: #8b0000; }
+
+        .submit-btn {
+            margin-top: 25px;
+            padding: 12px 25px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Estilos responsivos */
+        @media screen and (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .tower {
+                width: 90%;
+                padding: 10px;
+            }
+
+            .ingredient {
+                font-size: 1em;
+                min-width: 100px;
+            }
+
+            .submit-btn {
+                font-size: 1.1em;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Construye tu Montaña de Tortitas 🥞</h1>
+
+    <div class="tower" id="tower">
+        <!-- Las capas se insertarán aquí -->
+    </div>
+
+    <div class="controls">
+        <button class="ingredient tortita" onclick="addLayer('Tortita')">Tortita</button>
+        <button class="ingredient choco-blanco" onclick="addLayer('Nocilla Blanca')">Nocilla Blanca</button>
+        <button class="ingredient choco-leche" onclick="addLayer('Nocilla Normal')">Nocilla Normal</button>
+        <button class="ingredient choco" onclick="addLayer('Chocogofre')">Chocogofre</button>
+        <button class="ingredient kitkat" onclick="addLayer('KitKat')">KitKat</button>
+        <button class="ingredient" onclick="removeLayer()" style="background:#ff4444;color:white;">Eliminar capa</button>
+    </div>
+
+    <button class="submit-btn" onclick="submitStack()">🥞 Enviar montaña de tortitas 🥞</button>
+
+    <script>
+        const tower = document.getElementById('tower');
+        let stack = [];
+
+        // Mapa de ingredientes a colores
+        const ingredientColors = {
+            'Tortita': '#deb887', // Color de tortita
+            'Nocilla Blanca': '#fffacd', // Color de chocolate blanco
+            'Nocilla Normal': '#4b2e2e', // Color de chocolate negro
+            'Chocogofre': '#6a3313', // Color de KitKat
+            'KitKat': '#8b0000' // Color de KitKat
+        };
+
+        // Función para crear una capa visual
+        function createLayer(name) {
+            const div = document.createElement('div');
+            div.classList.add('layer');
+            div.textContent = name;
+
+            // Asignar color según el ingrediente
+            div.style.backgroundColor = ingredientColors[name] || '#f0f0f0'; // Color predeterminado si no está en el mapa
+
+            // Si el ingrediente es "Chocolate Blanco", poner el texto de color gris
+            if (name === 'Chocolate Blanco') {
+                div.style.color = '#808080'; // Color gris para el texto
+            }
+
+            return div;
+        }
+
+        // Función para agregar una capa
+        function addLayer(name) {
+            // Contar cuántas "Tortitas" hay en el stack
+            const tortitasCount = stack.filter(item => item === 'Tortita').length;
+
+            // Validar que no se agreguen más de 3 tortitas
+            if (name === 'Tortita' && tortitasCount >= 3) {
+                alert('¡No puedes agregar más de 3 tortitas!');
+                return;
+            }
+
+            // Validar que no se agreguen más de 5 capas en total
+            if (stack.length >= 5) {
+                alert('¡No puedes agregar más de 5 capas en total!');
+                return;
+            }
+
+            // Crear la capa y agregarla al stack y la torre
+            const layer = createLayer(name);
+            stack.push(name);
+            tower.appendChild(layer);
+        }
+
+        // Función para eliminar la última capa
+        function removeLayer() {
+            if (stack.length > 0) {
+                stack.pop();
+                tower.removeChild(tower.lastChild);
+            }
+        }
+
+        // Función para enviar la montaña al servidor
+        function submitStack() {
+            // Verificar que haya al menos una "Tortita"
+            const tortitasCount = stack.filter(item => item === 'Tortita').length;
+            if (tortitasCount === 0) {
+                alert('¡Debe haber al menos una tortita!');
+                return;
+            }
+
+            if (stack.length === 0) {
+                alert('¡Agrega al menos una capa!');
+                return;
+            }
+
+            const mesa = prompt("¿Nombre?");
+            if (!mesa) {
+                alert('Debes ingresar un nombre.');
+                return;
+            }
+
+            // Convertir el stack a un string único
+            const descripcion = stack.join(' > ');
+
+            fetch('https://5f73-80-224-236-72.ngrok-free.app/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    table: mesa,
+                    product: [descripcion]  // un solo producto con todo dentro
+                })
+            })
+            .then(res => {
+                if (res.ok) {
+                    alert('¡Montaña enviada con éxito! 🥞');
+                    stack = [];
+                    tower.innerHTML = ''; // Limpiar la torre después de enviar
+                } else {
+                    alert('Error al enviar la montaña 😢');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Error de conexión');
+            });
+        }
+    </script>
+</body>
+</html>
